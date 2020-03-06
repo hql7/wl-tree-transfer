@@ -1,23 +1,21 @@
 <template>
   <div id="app">
-    <img src="./assets/logo.png">
+    <img src="./assets/logo.png" />
     <div class="hello">
-    <h3>
-      <a href="https://github.com/hql7/tree-transfer" target="_block">GitHub</a>
-      <a href="https://www.npmjs.com/package/el-tree-transfer" target="_block">NPM</a>
-      <a href="https://segmentfault.com/a/1190000015553081" target="_block">SegmentFault</a>
-      <a href="https://blog.csdn.net/qq_15390381/article/details/80943549" target="_block">CSDN</a>
-      <a href="https://juejin.im/post/5b3ecae8e51d4519213fae4b" target="_block">掘金</a>
-    </h3>
-  </div>
+      <h3>
+        <a href="https://github.com/hql7/tree-transfer" target="_block">GitHub</a>
+        <a href="https://www.npmjs.com/package/el-tree-transfer" target="_block">NPM</a>
+        <a href="https://segmentfault.com/a/1190000015553081" target="_block">SegmentFault</a>
+        <a href="https://blog.csdn.net/qq_15390381/article/details/80943549" target="_block">CSDN</a>
+        <a href="https://juejin.im/post/5b3ecae8e51d4519213fae4b" target="_block">掘金</a>
+      </h3>
+    </div>
     <h4 class="hello">
       <label>请打开f12查看移动数据</label>
-      <el-button size="medium" type="info" @click="changeMode"
-        >当前模式：{{ mode }}</el-button
-      >
+      <el-button size="medium" type="info" @click="changeMode">当前模式：{{ mode }}</el-button>
     </h4>
     <div class="box">
-      <wlTreeTransfer
+      <wl-tree-transfer
         :title="title"
         :from_data="fromData"
         :to_data="toData"
@@ -34,24 +32,19 @@
         @right-check-change="rightCheckChange"
         filter
       >
-        <span
-          slot="title-right"
-          class="my-title-right"
-          @click="handleTitleRight"
-          >自定义内容</span
-        >
-      </wlTreeTransfer>
+        <span slot="title-right" class="my-title-right" @click="handleTitleRight">自定义内容</span>
+      </wl-tree-transfer>
     </div>
   </div>
 </template>
 
 <script>
-import wlTransfer from './components/tree-transfer/'
+// import WlTreeTransfer from "./components/tree-transfer/";
 
 export default {
-  name: 'app',
+  name: "app",
   components: {
-    wlTransfer
+    // WlTreeTransfer
   },
   data() {
     return {
@@ -907,13 +900,13 @@ export default {
         return ["通讯录", "收件人", "抄送人", "密送人"];
       }
     }
-  },
-}
+  }
+};
 </script>
 
 <style>
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
@@ -940,13 +933,13 @@ export default {
   cursor: pointer;
 }
 
-.hello{
+.hello {
   margin-bottom: 20px;
 }
 
 a {
   font-size: 1.17em;
-    font-weight: bold;
+  font-weight: bold;
   color: #42b983;
   margin: 0 5px;
 }
