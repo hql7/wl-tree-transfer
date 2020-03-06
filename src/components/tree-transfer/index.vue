@@ -300,6 +300,7 @@
 <script>
 import { arrayToTree } from "./array.js";
 export default {
+  name: 'wl-tree-transfer',
   data() {
     return {
       from_is_indeterminate: false, // 源数据是否半选

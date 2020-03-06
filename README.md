@@ -17,7 +17,7 @@ wl-tree-fransfer 是一个基于 VUE 和 element-ui 的树形穿梭框组件，�
 #### 这里有一个兄弟组件-树形表格：[在线访问](http://eltreetable.zhongxiang.shop/) - [GitHub](https://github.com/hql7/el-tree-table)
 
 ### 更新说明
-> 1.0.3版本同步[el-tree-transfer](https://github.com/hql7/tree-transfer)2.2.6版本
+> 1.0.5版本同步[el-tree-transfer](https://github.com/hql7/tree-transfer)2.2.6版本,请勿使用1.0.3/1.0.4
 
 ## 快速上手
 
