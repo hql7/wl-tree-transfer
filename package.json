@@ -1,6 +1,6 @@
 {
   "name": "wl-tree-transfer",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "private": false,
   "description": "A tree shaped shuttle box assembly based on Vue and element-ui 一个基于vue.js和element-ui的树形穿梭框，也可用于邮件通讯录",
   "author": "weilan",

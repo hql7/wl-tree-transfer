@@ -16,21 +16,20 @@
     </h4>
     <div class="box">
       <wl-tree-transfer
-        :title="title"
-        :from_data="fromData"
-        :to_data="toData"
-        :defaultProps="{ label: 'name', children: 'children' }"
-        :defaultCheckedKeys="defaultCheckedKeys"
-        :mode="mode"
-        lazy
-        :lazyFn="lazyFn"
+        filter
+        default-transfer
         height="540px"
         node_key="id"
+        :defaultProps="{ label: 'name', children: 'children' }"
+        :defaultCheckedKeys="defaultCheckedKeys"
+        :from_data="fromData"
+        :to_data="toData"
+        :title="title"
+        :mode="mode"
         @addBtn="add"
         @removeBtn="remove"
         @left-check-change="leftCheckChange"
         @right-check-change="rightCheckChange"
-        filter
       >
         <span slot="title-right" class="my-title-right" @click="handleTitleRight">自定义内容</span>
       </wl-tree-transfer>
@@ -39,12 +38,12 @@
 </template>
 
 <script>
-// import WlTreeTransfer from "./components/tree-transfer/";
+import WlTreeTransfer from "./components/tree-transfer/";
 
 export default {
   name: "app",
   components: {
-    // WlTreeTransfer
+    WlTreeTransfer
   },
   data() {
     return {
@@ -187,7 +186,7 @@ export default {
     // this.defaultCheckedKeys = [1];
 
     this.$nextTick(() => {
-      // this.defaultCheckedKeys = [1];
+      this.defaultCheckedKeys = [1];
     });
 
     /* setTimeout(() => {
