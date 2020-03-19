@@ -16,16 +16,16 @@
     </h4>
     <div class="box">
       <wl-tree-transfer
+        lazy
         filter
-        default-transfer
         height="540px"
         node_key="id"
         :defaultProps="{ label: 'name', children: 'children' }"
-        :defaultCheckedKeys="defaultCheckedKeys"
         :from_data="fromData"
         :to_data="toData"
         :title="title"
         :mode="mode"
+        :lazyFn="lazyFn"
         @addBtn="add"
         @removeBtn="remove"
         @left-check-change="leftCheckChange"
@@ -808,6 +808,7 @@ export default {
   methods: {
     // 懒加载回调
     lazyFn(node, resolve) {
+      console.log(1)
       setTimeout(() => {
         resolve([
           {
@@ -824,6 +825,8 @@ export default {
             children: []
           }
         ]);
+      console.log(2)
+
       }, 500);
     },
     // 切换模式 现有树形穿梭框模式transfer 和通讯录模式addressList

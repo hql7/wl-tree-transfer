@@ -300,6 +300,7 @@
 <script>
 import { arrayToTree } from "./array.js";
 export default {
+  name: 'wl-tree-transfer',
   data() {
     return {
       from_is_indeterminate: false, // 源数据是否半选
@@ -707,7 +708,6 @@ export default {
       if (node.level === 0) {
         return resolve(this.self_from_data);
       }
-
       this.lazyFn && this.lazyFn(node, resolve, "left");
     },
     // 异步加载右侧
