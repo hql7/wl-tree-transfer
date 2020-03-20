@@ -808,25 +808,22 @@ export default {
   methods: {
     // 懒加载回调
     lazyFn(node, resolve) {
-      console.log(1)
       setTimeout(() => {
         resolve([
           {
             id: 71272,
-            pid: 7127,
+            pid: 1,
             name: "debug22",
             // disabled: true,
             children: []
           },
           {
             id: 71273,
-            pid: 7127,
+            pid: 1,
             name: "debug11",
             children: []
           }
         ]);
-      console.log(2)
-
       }, 500);
     },
     // 切换模式 现有树形穿梭框模式transfer 和通讯录模式addressList

@@ -154,6 +154,7 @@ Vue.use(WlTreeTransfer)
 | 23 | high-light | 是否高亮当前选中节点| Boolean | false | - | false | - |
 | 24 | filterNode | 自定义搜索函数 | Function | false | - | - | 不传则仍默认根据defaultProps参数的label字段筛选 |
 | 25 | defaultExpandedKeys | 默认展开节点 | Array | false | - | - | 要展开的节点id数组，会自动去重生效在左右两侧 |
+| 26 | lazyRight |  2.2.9 版本lazy属性只对左侧树生效，如果需要右侧也是用懒加载->lazyRight | Boolean | - | - | - |
 
 > -----------------------------------------------------------
 
@@ -183,6 +184,8 @@ Vue.use(WlTreeTransfer)
 
 
 ## 版本说明
+
+> 2.2.9 版本lazy属性只对左侧树生效，如果需要右侧也是用懒加载->lazyRight
 
 > 2.2.8 优化defaultCheckedKeys和defaultTransfer配合使用时，触发了添加事件的问题，通常默认第一次穿梭是后台偷懒没有生成fromData和toData
 两份数据，需要前端拆分，此时再触发添加事件则务必要；另可不使用defaultTransfer而是在defaultCheckedKeys改变后手动调用addToAims(false)函数，参数传false则不会触发emit回调
