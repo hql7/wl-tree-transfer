@@ -185,6 +185,8 @@ Vue.use(WlTreeTransfer)
 
 ## 版本说明
 
+> 2.3.0 取消css secoped
+
 > 2.2.9 版本lazy属性只对左侧树生效，如果需要右侧也是用懒加载->lazyRight
 
 > 2.2.8 优化defaultCheckedKeys和defaultTransfer配合使用时，触发了添加事件的问题，通常默认第一次穿梭是后台偷懒没有生成fromData和toData
