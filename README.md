@@ -155,6 +155,9 @@ Vue.use(WlTreeTransfer)
 | 24 | filterNode | 自定义搜索函数 | Function | false | - | - | 不传则仍默认根据defaultProps参数的label字段筛选 |
 | 25 | defaultExpandedKeys | 默认展开节点 | Array | false | - | - | 要展开的节点id数组，会自动去重生效在左右两侧 |
 | 26 | lazyRight |  2.2.9 版本lazy属性只对左侧树生效，如果需要右侧也是用懒加载->lazyRight | Boolean | - | - | - |
+| 27 | sjr | 通讯录模式，设置右侧收件人数据 | Array | false | - | - | - | 
+| 28 | csr | 通讯录模式，设置右侧抄送人数据 | Array | false | - | - | - | 
+| 29 | msr | 通讯录模式，设置右侧密送人数据 | Array | false | - | - | - | 
 
 > -----------------------------------------------------------
 
