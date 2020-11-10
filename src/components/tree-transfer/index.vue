@@ -231,7 +231,7 @@
             <ul class="address-list-ul">
               <li
                 class="address-list-li"
-                v-for="item of selfSjr"
+                v-for="item of addressee"
                 :key="item[node_key]"
               >
                 <label>
@@ -240,10 +240,9 @@
                   {{ item[addressOptions.suffix] }}
                 </label>
                 <i
-                  class="address-list-del"
+                  class="address-list-del el-icon-delete"
                   @click="clearList(0, item[node_key])"
-                  >x</i
-                >
+                ></i>
               </li>
             </ul>
           </div>
@@ -266,7 +265,7 @@
             <ul class="address-list-ul">
               <li
                 class="address-list-li"
-                v-for="item of selfCsr"
+                v-for="item of Cc"
                 :key="item[node_key]"
               >
                 <label>
@@ -275,10 +274,9 @@
                   {{ item[addressOptions.suffix] }}
                 </label>
                 <i
-                  class="address-list-del"
+                  class="address-list-del el-icon-delete"
                   @click="clearList(1, item[node_key])"
-                  >x</i
-                >
+                ></i>
               </li>
             </ul>
           </div>
@@ -314,7 +312,7 @@
             <ul class="address-list-ul">
               <li
                 class="address-list-li"
-                v-for="item of selfMsr"
+                v-for="item of secret_receiver"
                 :key="item[node_key]"
               >
                 <label>
@@ -323,10 +321,9 @@
                   {{ item[addressOptions.suffix] }}
                 </label>
                 <i
-                  class="address-list-del"
+                  class="address-list-del el-icon-delete"
                   @click="clearList(2, item[node_key])"
-                  >x</i
-                >
+                ></i>
               </li>
             </ul>
           </div>
@@ -367,9 +364,24 @@ export default {
     };
   },
   props: {
-    sjr: Array,
-    csr: Array,
-    msr: Array,
+    sjr: {
+      type: Array,
+      default: () => {
+        return [];
+      },
+    },
+    csr: {
+      type: Array,
+      default: () => {
+        return [];
+      },
+    },
+    msr: {
+      type: Array,
+      default: () => {
+        return [];
+      },
+    },
     // 宽度
     width: {
       type: String,
@@ -1108,21 +1120,41 @@ export default {
       let _to = new Set(this.to_expanded_keys.concat(val));
       this.to_expanded_keys = [..._to];
     },
+    // 收件人默认值监测
+    sjr: {
+      handler(val) {
+        this.addressee.push(...val);
+      },
+      immediate: true,
+    },
+    // 抄送人默认值监测
+    csr: {
+      handler(val) {
+        this.Cc.push(...val);
+      },
+      immediate: true,
+    },
+    // 密送人默认值监测
+    msr: {
+      handler(val) {
+        this.secret_receiver.push(...val);
+      },
+      immediate: true,
+    },
   },
 };
 </script>
 
 <style lang="scss">
 @import "./clear.css";
-.el-tree {
-  min-width: 100%;
-  display: inline-block !important;
-}
 
 .wl-transfer {
   position: relative;
   overflow: hidden;
-
+  .el-tree {
+    min-width: 100%;
+    display: inline-block !important;
+  }
   .transfer-left {
     position: absolute;
     top: 0;
