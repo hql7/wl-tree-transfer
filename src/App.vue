@@ -16,7 +16,6 @@
     </h4>
     <div class="box">
       <wl-tree-transfer
-        lazy
         filter
         height="540px"
         node_key="id"
@@ -25,7 +24,6 @@
         :to_data="toData"
         :title="title"
         :mode="mode"
-        :lazyFn="lazyFn"
         @addBtn="add"
         @removeBtn="remove"
         @left-check-change="leftCheckChange"

@@ -3,7 +3,8 @@ node_modules
 dist
 public
 src
-
+babel.config.js
+yarn.lock
 # local env files
 .env.local
 .env.*.local

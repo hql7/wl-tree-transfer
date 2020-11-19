@@ -2,52 +2,42 @@
 
 ## 简介
 
----
-
 wl-tree-fransfer 是一个基于 VUE 和 element-ui 的树形穿梭框组件，使用前请确认已经引入[element-ui](http://element.eleme.io/#/zh-CN/component/quickstart)！
 此组件功能类似于`element-ui`的[transfer](http://element.eleme.io/#/zh-CN/component/transfer)组件，但是里面的数据是树形结构！
 实际上，wl-tree-transfer 依赖的 element-ui 组件分别是[Checkbox 多选框](http://element.eleme.io/#/zh-CN/component/checkbox#checkbox-duo-xuan-kuang)，[Button 按钮](http://element.eleme.io/#/zh-CN/component/button)，和最主要的[Tree 树形控件](http://element.eleme.io/#/zh-CN/component/tree)写成！并非是在 element-ui 的穿梭框组件上的扩展，而仅仅是参照了其外观样式和功能。
 
 因为公司业务使用 vue 框架，ui 库使用的 element-ui。在市面上找到一个好用的 vue 树形穿梭框组件都很难，又不想仅仅因为一个穿梭框在 element-ui 之外引入其他重量级插件，因此就有了 el-tree-transfer。轻量，易用，无需投入其他学习成本。
 
-### [在线访问](http://tree-transfer.zhongxiang.shop/) - [GitHub](https://github.com/hql7/tree-transfer) - [NPM](https://www.npmjs.com/package/el-tree-transfer) - [SegmentFault](https://segmentfault.com/a/1190000015553081) - [CSDN](https://blog.csdn.net/qq_15390381/article/details/80943549)- [掘金](https://juejin.im/post/5b3ecae8e51d4519213fae4b)
+### [文档地址](http://docs.wlui.com.cn/) - [GitHub](https://github.com/wl-ui/wlui)
+### [在线访问](http://wlui.com.cn/) - [GitHub](https://github.com/hql7/tree-transfer) - [NPM](https://www.npmjs.com/package/el-tree-transfer) - [SegmentFault](https://segmentfault.com/a/1190000015553081) - [CSDN](https://blog.csdn.net/qq_15390381/article/details/80943549)- [掘金](https://juejin.im/post/5b3ecae8e51d4519213fae4b)
 
-> 第一层数据的 pid 请设定为 0！！ pid 就是父级的 id！别再跑过来问了真的
-> id 推荐为 string，但也可以是 number，请不要混用，id 不要重复！！！
-#### 这里有一个兄弟组件-树形表格：[在线访问](http://eltreetable.zhongxiang.shop/) - [GitHub](https://github.com/hql7/el-tree-table)
-
-### 更新说明
-> 1.0.7版本同步[el-tree-transfer](https://github.com/hql7/tree-transfer)2.2.8版本,请勿使用1.0.6
-> 1.0.5版本同步[el-tree-transfer](https://github.com/hql7/tree-transfer)2.2.6版本,请勿使用1.0.3/1.0.4
+> 2.3.3 修改穿梭匹配逻辑；增加rootPidValue参数。详细说明见下方版本说明
 
 ## 快速上手
 
 > 先 npm 下载插件
-```
-`npm install wl-tree-transfer --save`
+
+`npm install el-tree-transfer --save`
+
 或
-`npm i wl-tree-transfer -S`
 
-import WlTreeTransfer from 'wl-tree-transfer' 
-import 'wl-tree-transfer/lib/wl-tree-transfer.css' 
-Vue.use(WlTreeTransfer)
-```
-
+`npm i el-tree-transfer -S`
 
 > 然后你可以像使用普通组件一样使用 el-tree-transfer
-  ```
+
+```js
     <template>
       <div>
         // 你的代码
         ...
         // 使用树形穿梭框组件
-        <wl-tree-transfer :title="title" :from_data='fromData' :to_data='toData' :defaultProps="{label:'label'}" @addBtn='add' @removeBtn='remove' :mode='mode' height='540px' filter openAll>
-      </wl-tree-transfer>
+        <tree-transfer :title="title" :from_data='fromData' :to_data='toData' :defaultProps="{label:'label'}" @addBtn='add' @removeBtn='remove' :mode='mode' height='540px' filter openAll>
+      </tree-transfer>
       </div>
     </template>
 
     <script>
-
+      import treeTransfer from 'el-tree-transfer' // 引入
 
       export defult {
         data(){
@@ -117,14 +107,15 @@ Vue.use(WlTreeTransfer)
             console.log("obj:", obj);
           }
         },
-        comporents:{ treeTransfer } // 注册
+        components:{ treeTransfer } // 注册
       }
     </script>
 
     <style>
     ...
     </style>
-  ```
+```
+
 ## 文档
 
 | 序号 | 参数 | 说明 | 类型 | 必填 | 可选值 | 默认值 | 补充 |
@@ -158,8 +149,11 @@ Vue.use(WlTreeTransfer)
 | 27 | sjr | 通讯录模式，设置右侧收件人数据 | Array | false | - | - | - | 
 | 28 | csr | 通讯录模式，设置右侧抄送人数据 | Array | false | - | - | - | 
 | 29 | msr | 通讯录模式，设置右侧密送人数据 | Array | false | - | - | - | 
+| 30 | rootPidValue | 穿梭框模式，根节点数据pid的值，用于匹配退出循环，重要 | String,Number | 0 | - | - | 插件不再强制将你的数据根节点pid都改为0 |
 
 > -----------------------------------------------------------
+
+## 事件
 
 | 序号 | 事件名称 | 说明 | 回调参数 |
 | ---- | ---- | ---- | ---- |
@@ -167,6 +161,8 @@ Vue.use(WlTreeTransfer)
 | 2 | removeBtn | 点击移除按钮时触发的事件 | function(fromData,toData,obj),树形穿梭框transfer模式分别为1.移动后左侧数据，2.移动后右侧数据，3.移动的节点keys、nodes、halfKeys、halfNodes对象；通讯录addressList模式时返回参数为右侧收件人列表、右侧抄送人列表、右侧密送人列表 |
 | 3 | left-check-change | 左侧源数据勾选事件 | function(nodeObj, treeObj, checkAll)见el-tree组件check事件返回值, 新增checkAll参数表示是否全部选中 | 
 | 4 | right-check-change | 右侧目标数据勾选事件 | function(nodeObj, treeObj, checkAll)见el-tree组件check事件返回值, 新增checkAll参数表示是否全部选中 |
+
+> --------------------------------------------------------
 
 ## 方法
 
@@ -176,7 +172,7 @@ Vue.use(WlTreeTransfer)
 
 > --------------------------------------------------------
 
-> --------------------------------------------------------
+## slot
 
 | 序号 | 名字 | 说明 |
 | ---- | ---- | ---- |
@@ -184,11 +180,19 @@ Vue.use(WlTreeTransfer)
 | 2 | right-footer | 穿梭框左侧、右侧底部slot |
 | 3 | title-left | 穿梭框标题区左侧、右侧自定义内容 |
 | 4 | title-right | 穿梭框标题区左侧、右侧自定义内容 |
+| 5 | form | 左侧内容区上部slot |
+| 6 | to | 右侧内容区上部slot | 
 
 
 ## 版本说明
 
-> 2.3.0 取消css secoped
+> 2.3.3 更改判断穿梭目标是否已在对面存在的算法，避免原来str正则意外匹配结果（如children和list两个字段里都有这个id，穿梭移除后，children里的数据没了，list里面数据还在，此时原来的匹配逻辑仍会任务目标已在对面存在而忽略穿梭）；增加`rootPidValue`字段，不再强制将根节点的pid都改为0
+
+> 2.3.2 优化通讯录模式
+
+> 2.3.1 将外层对el-tree的css设定移入内层，消除2.3.0取消css scoped产生的影响
+
+> 2.3.0 取消css scoped
 
 > 2.2.9 版本lazy属性只对左侧树生效，如果需要右侧也是用懒加载->lazyRight
 

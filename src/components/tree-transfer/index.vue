@@ -334,7 +334,8 @@
 </template>
 
 <script>
-import { arrayToTree } from "./array.js";
+import { arrayToTree, valInDeep } from "wl-core";
+
 export default {
   name: "wl-tree-transfer",
   data() {
@@ -363,7 +364,7 @@ export default {
       move_up: false, // 通讯录模式 切换右侧
     };
   },
-  props: {
+   props: {
     sjr: {
       type: Array,
       default: () => {
@@ -425,6 +426,11 @@ export default {
     pid: {
       type: String,
       default: "pid",
+    },
+    // 自定义根节点pid的值，用于结束递归
+    rootPidValue: {
+      type: [String, Number],
+      default: 0,
     },
     // 是否启用筛选
     filter: {
@@ -493,7 +499,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    // 右侧是否启用懒加载
+    // 是否右侧树也启用懒加载
     lazyRight: {
       type: Boolean,
       default: false,
@@ -506,40 +512,8 @@ export default {
       default: false,
     },
   },
-  created() {
-    this.from_check_keys = this.defaultCheckedKeys;
-    this.from_expanded_keys = this.defaultExpandedKeys;
-    this.to_expanded_keys = this.defaultExpandedKeys;
-    if (this.defaultTransfer && this.defaultCheckedKeys.length > 0) {
-      this.$nextTick(() => {
-        this.addToAims(false);
-      });
-    }
-  },
   methods: {
     // -------------------------------提供输出函数---------------------
-    /**
-     * 清空选中节点
-     * type：string left左边 right右边 all全部 默认all
-     */
-    clearChecked(type = "all") {
-      if (type === "left") {
-        this.$refs["from-tree"].setCheckedKeys([]);
-        this.from_is_indeterminate = false;
-        this.from_check_all = false;
-      } else if (type === "right") {
-        this.$refs["to-tree"].setCheckedKeys([]);
-        this.to_is_indeterminate = false;
-        this.to_check_all = false;
-      } else {
-        this.$refs["from-tree"].setCheckedKeys([]);
-        this.$refs["to-tree"].setCheckedKeys([]);
-        this.from_is_indeterminate = false;
-        this.from_check_all = false;
-        this.to_is_indeterminate = false;
-        this.to_check_all = false;
-      }
-    },
     // 添加按钮
     addToAims(emit) {
       // 获取选中通过穿梭框的keys - 仅用于传送纯净的id数组到父组件同后台通信
@@ -559,6 +533,7 @@ export default {
       let children__ = this.defaultProps.children || "children";
       let pid__ = this.pid || "pid";
       let id__ = this["node_key"] || "id";
+      let root__ = this.rootPidValue || 0;
 
       /*
        * 先整合目标树没有父节点的叶子节点选中，需要整理出来此叶子节点的父节点直到根节点路径 - 此时所有骨架节点已有
@@ -568,7 +543,7 @@ export default {
        */
 
       // let不存在状态提升 因此在函数调用之前赋值 并递归为以为数组！
-      let self_to_data = JSON.stringify(this.self_to_data);
+      // let self_to_data = JSON.stringify(this.self_to_data);
       // 第一步
       let skeletonHalfCheckedNodes = JSON.parse(
         JSON.stringify(arrayHalfCheckedNodes)
@@ -576,23 +551,37 @@ export default {
       // 筛选目标树不存在的骨架节点 - 半选内的节点
       let newSkeletonHalfCheckedNodes = [];
       skeletonHalfCheckedNodes.forEach((item) => {
-        if (!inquireIsExist(item)) {
+        // 判断目标是否已在对面存在
+        let inThere = valInDeep(
+          this.self_to_data,
+          item[id__],
+          id__,
+          children__
+        );
+        if (!inThere.length) {
           newSkeletonHalfCheckedNodes.push(item);
         }
       });
       // 筛选到目标树不存在的骨架后在处理每个骨架节点-非末端叶子节点 - 半选节点
       newSkeletonHalfCheckedNodes.forEach((item) => {
         item[children__] = [];
-        [0, "0"].includes(item[pid__])
-          ? this.$refs["to-tree"].append(item)
-          : this.$refs["to-tree"].append(item, item[pid__]);
+        root__ !== item[pid__]
+          ? this.$refs["to-tree"].append(item, item[pid__])
+          : this.$refs["to-tree"].append(item);
       });
 
       // 第二步
       // 筛选目标树不存在的骨架节点 - 全选内的节点
       let newSkeletonCheckedNodes = [];
       nodes.forEach((item) => {
-        if (!inquireIsExist(item)) {
+        // 判断目标是否已在对面存在
+        let inThere = valInDeep(
+          this.self_to_data,
+          item[id__],
+          id__,
+          children__
+        );
+        if (!inThere.length) {
           newSkeletonCheckedNodes.push(item);
         }
       });
@@ -600,9 +589,9 @@ export default {
       newSkeletonCheckedNodes.forEach((item) => {
         if (item[children__] && item[children__].length > 0) {
           item[children__] = [];
-          [0, "0"].includes(item[pid__])
-            ? this.$refs["to-tree"].append(item)
-            : this.$refs["to-tree"].append(item, item[pid__]);
+          root__ !== item[pid__]
+            ? this.$refs["to-tree"].append(item, item[pid__])
+            : this.$refs["to-tree"].append(item);
         }
       });
 
@@ -612,13 +601,20 @@ export default {
       );
       // 末端叶子插入目标树
       leafCheckedNodes.forEach((item) => {
-        if (!inquireIsExist(item)) {
+        // 判断目标是否已在对面存在
+        let inThere = valInDeep(
+          this.self_to_data,
+          item[id__],
+          id__,
+          children__
+        );
+        if (!inThere.length) {
           this.$refs["to-tree"].append(item, item[pid__]);
         }
       });
 
       // 递归查询data内是否存在item函数
-      function inquireIsExist(item, strData = self_to_data) {
+      /* function inquireIsExist(item, strData = self_to_data) {
         // 将树形数据格式化成一维字符串 然后通过匹配来判断是否已存在
         let strItem =
           typeof item[id__] == "number"
@@ -627,7 +623,7 @@ export default {
         let reg = RegExp(strItem);
         let existed = reg.test(strData);
         return existed;
-      }
+      } */
 
       // 左侧删掉选中数据
       arrayCheckedNodes.map((item) => this.$refs["from-tree"].remove(item));
@@ -671,6 +667,7 @@ export default {
       let children__ = this.defaultProps.children || "children";
       let pid__ = this.pid || "pid";
       let id__ = this["node_key"] || "id";
+      let root__ = this.rootPidValue || 0;
 
       /*
        * 先整合目标树没有父节点的叶子节点选中，需要整理出来此叶子节点的父节点直到根节点路径 - 此时所有骨架节点已有
@@ -680,7 +677,7 @@ export default {
        */
 
       // let不存在状态提升 因此在函数调用之前赋值 并递归为以为数组！
-      let self_from_data = JSON.stringify(this.self_from_data);
+      // let self_from_data = JSON.stringify(this.self_from_data);
       // 第一步
       let skeletonHalfCheckedNodes = JSON.parse(
         JSON.stringify(arrayHalfCheckedNodes)
@@ -688,23 +685,37 @@ export default {
       // 筛选目标树不存在的骨架节点 - 半选内的节点
       let newSkeletonHalfCheckedNodes = [];
       skeletonHalfCheckedNodes.forEach((item) => {
-        if (!inquireIsExist(item)) {
+        // 判断目标是否已在对面存在
+        let inThere = valInDeep(
+          this.self_from_data,
+          item[id__],
+          id__,
+          children__
+        );
+        if (!inThere.length) {
           newSkeletonHalfCheckedNodes.push(item);
         }
       });
       // 筛选到目标树不存在的骨架后在处理每个骨架节点-非末端叶子节点 - 半选节点
       newSkeletonHalfCheckedNodes.forEach((item) => {
         item[children__] = [];
-        [0, "0"].includes(item[pid__])
-          ? this.$refs["from-tree"].append(item)
-          : this.$refs["from-tree"].append(item, item[pid__]);
+        root__ !== item[pid__]
+          ? this.$refs["from-tree"].append(item, item[pid__])
+          : this.$refs["from-tree"].append(item);
       });
 
       // 第二步
       // 筛选目标树不存在的骨架节点 - 全选内的节点
       let newSkeletonCheckedNodes = [];
       nodes.forEach((item) => {
-        if (!inquireIsExist(item)) {
+        // 判断目标是否已在对面存在
+        let inThere = valInDeep(
+          this.self_from_data,
+          item[id__],
+          id__,
+          children__
+        );
+        if (!inThere.length) {
           newSkeletonCheckedNodes.push(item);
         }
       });
@@ -712,9 +723,9 @@ export default {
       newSkeletonCheckedNodes.forEach((item) => {
         if (item[children__] && item[children__].length > 0) {
           item[children__] = [];
-          [0, "0"].includes(item[pid__])
-            ? this.$refs["from-tree"].append(item)
-            : this.$refs["from-tree"].append(item, item[pid__]);
+          root__ !== item[pid__]
+            ? this.$refs["from-tree"].append(item, item[pid__])
+            : this.$refs["from-tree"].append(item);
         }
       });
 
@@ -724,13 +735,20 @@ export default {
       );
       // 末端叶子插入目标树
       leafCheckedNodes.forEach((item) => {
-        if (!inquireIsExist(item)) {
+        // 判断目标是否已在对面存在
+        let inThere = valInDeep(
+          this.self_from_data,
+          item[id__],
+          id__,
+          children__
+        );
+        if (!inThere.length) {
           this.$refs["from-tree"].append(item, item[pid__]);
         }
       });
 
       // 递归查询data内是否存在item函数
-      function inquireIsExist(item, strData = self_from_data) {
+      /* function inquireIsExist(item, strData = self_from_data) {
         // 将树形数据格式化成一维字符串 然后通过匹配来判断是否已存在
         let strItem =
           typeof item[id__] == "number"
@@ -739,7 +757,7 @@ export default {
         let reg = RegExp(strItem);
         let existed = reg.test(strData);
         return existed;
-      }
+      } */
 
       // 右侧删掉选中数据
       arrayCheckedNodes.map((item) => this.$refs["to-tree"].remove(item));
@@ -764,17 +782,10 @@ export default {
     },
     // 异步加载左侧
     leftloadNode(node, resolve) {
-      if (node.level === 0) {
-        return resolve(this.self_from_data);
-      }
       this.lazyFn && this.lazyFn(node, resolve, "left");
     },
     // 异步加载右侧
     rightloadNode(node, resolve) {
-      if (node.level === 0) {
-        return resolve(this.self_to_data);
-      }
-
       this.lazyFn && this.lazyFn(node, resolve, "right");
     },
     // 源树选中事件 - 是否禁用穿梭按钮
@@ -925,39 +936,85 @@ export default {
       }
     },
     // 以下为提供方法 ----------------------------------------------------------------方法--------------------------------------
+    /**
+     * @name 清空选中节点
+     * @param {String} type left左边 right右边 all全部 默认all
+     */
+    clearChecked(type = "all") {
+      if (type === "left") {
+        this.$refs["from-tree"].setCheckedKeys([]);
+        this.from_is_indeterminate = false;
+        this.from_check_all = false;
+      } else if (type === "right") {
+        this.$refs["to-tree"].setCheckedKeys([]);
+        this.to_is_indeterminate = false;
+        this.to_check_all = false;
+      } else {
+        this.$refs["from-tree"].setCheckedKeys([]);
+        this.$refs["to-tree"].setCheckedKeys([]);
+        this.from_is_indeterminate = false;
+        this.from_check_all = false;
+        this.to_is_indeterminate = false;
+        this.to_check_all = false;
+      }
+    },
+    /**
+     * @name 获取选中数据
+     */
+    getChecked() {
+      // 左侧选中信息
+      let leftKeys = this.$refs["from-tree"].getCheckedKeys();
+      let leftHarfKeys = this.$refs["from-tree"].getHalfCheckedKeys();
+      let leftNodes = this.$refs["from-tree"].getCheckedNodes();
+      let leftHalfNodes = this.$refs["from-tree"].getHalfCheckedNodes();
+      // 右侧选中信息
+      let rightKeys = this.$refs["to-tree"].getCheckedKeys();
+      let rightHarfKeys = this.$refs["to-tree"].getHalfCheckedKeys();
+      let rightNodes = this.$refs["to-tree"].getCheckedNodes();
+      let rightHalfNodes = this.$refs["to-tree"].getHalfCheckedNodes();
+      return {
+        leftKeys,
+        leftHarfKeys,
+        leftNodes,
+        leftHalfNodes,
+        rightKeys,
+        rightHarfKeys,
+        rightNodes,
+        rightHalfNodes,
+      };
+    },
+    /**
+     * @name 设置选中数据
+     * @param {Array} leftKeys 左侧ids
+     * @param {Array} rightKeys 右侧ids
+     */
+    setChecked(leftKeys = [], rightKeys = []) {
+      this.$refs["from-tree"].setCheckedKeys(leftKeys);
+      this.$refs["to-tree"].setCheckedKeys(rightKeys);
+    },
   },
   computed: {
     // 左侧数据
     self_from_data() {
       let from_array = [...this.from_data];
-      if (!this.arrayToTree) {
-        from_array.forEach((item) => {
-          item[this.pid] = 0;
-        });
-        return from_array;
-      } else {
-        return arrayToTree(from_array, {
-          id: this.node_key,
-          pid: this.pid,
-          children: this.defaultProps.children,
-        });
-      }
+      return !this.arrayToTree
+        ? from_array
+        : arrayToTree(from_array, {
+            id: this.node_key,
+            pid: this.pid,
+            children: this.defaultProps.children,
+          });
     },
     // 右侧数据
     self_to_data() {
       let to_array = [...this.to_data];
-      if (!this.arrayToTree) {
-        to_array.forEach((item) => {
-          item[this.pid] = 0;
-        });
-        return to_array;
-      } else {
-        return arrayToTree(to_array, {
-          id: this.node_key,
-          pid: this.pid,
-          children: this.defaultProps.children,
-        });
-      }
+      return !this.arrayToTree
+        ? to_array
+        : arrayToTree(to_array, {
+            id: this.node_key,
+            pid: this.pid,
+            children: this.defaultProps.children,
+          });
     },
     // 左侧菜单名
     fromTitle() {
@@ -995,22 +1052,6 @@ export default {
       }
       let [, text] = this.button_text;
       return text;
-    },
-    // 收件人
-    selfSjr() {
-      return Array.isArray(this.sjr)
-        ? this.sjr.concat(this.addressee)
-        : this.addressee;
-    },
-    // 抄送人
-    selfCsr() {
-      return Array.isArray(this.csr) ? this.sjr.concat(this.Cc) : this.Cc;
-    },
-    // 密送人
-    selfMsr() {
-      return Array.isArray(this.msr)
-        ? this.sjr.concat(this.secret_receiver)
-        : this.secret_receiver;
     },
   },
   watch: {
@@ -1106,19 +1147,26 @@ export default {
       );
     },
     // 监视默认选中
-    defaultCheckedKeys(val) {
-      if (this.defaultTransfer && val.length > 0) {
-        this.$nextTick(() => {
-          this.addToAims(false);
-        });
-      }
+    defaultCheckedKeys: {
+      handler(val) {
+        this.from_check_keys = val || [];
+        if (this.defaultTransfer && this.from_check_keys.length) {
+          this.$nextTick(() => {
+            this.addToAims(false);
+          });
+        }
+      },
+      immediate: true,
     },
     // 监视默认展开
-    defaultExpandedKeys(val) {
-      let _form = new Set(this.from_expanded_keys.concat(val));
-      this.from_expanded_keys = [..._form];
-      let _to = new Set(this.to_expanded_keys.concat(val));
-      this.to_expanded_keys = [..._to];
+    defaultExpandedKeys: {
+      handler(val) {
+        let _form = new Set(this.from_expanded_keys.concat(val));
+        this.from_expanded_keys = [..._form];
+        let _to = new Set(this.to_expanded_keys.concat(val));
+        this.to_expanded_keys = [..._to];
+      },
+      immediate: true,
     },
     // 收件人默认值监测
     sjr: {
