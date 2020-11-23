@@ -36,12 +36,12 @@
 </template>
 
 <script>
-import WlTreeTransfer from "./components/tree-transfer/";
+// import WlTreeTransfer from "./components/tree-transfer/";
 
 export default {
   name: "app",
   components: {
-    WlTreeTransfer
+    // WlTreeTransfer
   },
   data() {
     return {

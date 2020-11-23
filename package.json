@@ -15,7 +15,8 @@
     "core-js": "^2.6.5",
     "element-ui": "^2.4.5",
     "vue": "^2.6.10",
-    "wl-core": "^1.1.7"
+    "wl-core": "^1.1.7",
+    "wl-tree-transfer": "^1.1.1"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.11.0",

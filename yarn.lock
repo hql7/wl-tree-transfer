@@ -8697,6 +8697,16 @@ wl-core@^1.1.7:
     big.js "^5.2.2"
     dayjs "^1.8.25"
 
+wl-tree-transfer@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/wl-tree-transfer/-/wl-tree-transfer-1.1.1.tgz#db9cfe3db4472c82b143cd96e5f63f207b826209"
+  integrity sha512-aZ3LFjncuvSImZgOcOrwqX4knP4vFLWtOBnxmVMwl5whV6lM+TXAU+eYgqQtRJA2k7sGLb1hAfg+pf5tKS5BtA==
+  dependencies:
+    core-js "^2.6.5"
+    element-ui "^2.4.5"
+    vue "^2.6.10"
+    wl-core "^1.1.7"
+
 word-wrap@~1.2.3:
   version "1.2.3"
   resolved "https://registry.yarnpkg.com/word-wrap/-/word-wrap-1.2.3.tgz#610636f6b1f703891bd34771ccb17fb93b47079c"
