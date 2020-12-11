@@ -5,18 +5,27 @@
       <h3>
         <a href="https://github.com/hql7/tree-transfer" target="_block">GitHub</a>
         <a href="https://www.npmjs.com/package/el-tree-transfer" target="_block">NPM</a>
-        <a href="https://segmentfault.com/a/1190000015553081" target="_block">SegmentFault</a>
-        <a href="https://blog.csdn.net/qq_15390381/article/details/80943549" target="_block">CSDN</a>
+        <a href="https://segmentfault.com/a/1190000015553081" target="_block"
+          >SegmentFault</a
+        >
+        <a
+          href="https://blog.csdn.net/qq_15390381/article/details/80943549"
+          target="_block"
+          >CSDN</a
+        >
         <a href="https://juejin.im/post/5b3ecae8e51d4519213fae4b" target="_block">掘金</a>
       </h3>
     </div>
     <h4 class="hello">
       <label>请打开f12查看移动数据</label>
-      <el-button size="medium" type="info" @click="changeMode">当前模式：{{ mode }}</el-button>
+      <el-button size="medium" type="info" @click="changeMode"
+        >当前模式：{{ mode }}</el-button
+      >
     </h4>
     <div class="box">
       <wl-tree-transfer
         filter
+        checkStrictly
         height="540px"
         node_key="id"
         :defaultProps="{ label: 'name', children: 'children' }"
@@ -29,19 +38,21 @@
         @left-check-change="leftCheckChange"
         @right-check-change="rightCheckChange"
       >
-        <span slot="title-right" class="my-title-right" @click="handleTitleRight">自定义内容</span>
+        <span slot="title-right" class="my-title-right" @click="handleTitleRight"
+          >自定义内容</span
+        >
       </wl-tree-transfer>
     </div>
   </div>
 </template>
 
 <script>
-// import WlTreeTransfer from "./components/tree-transfer/";
+import WlTreeTransfer from "./components/tree-transfer/";
 
 export default {
   name: "app",
   components: {
-    // WlTreeTransfer
+    WlTreeTransfer,
   },
   data() {
     return {
@@ -57,14 +68,14 @@ export default {
               pid: 1,
               name: "水电费是打发斯蒂芬斯蒂芬gas噶水电费噶地方死光光",
               // disabled: true,
-              children: []
+              children: [],
             },
             {
               id: 3,
               pid: 1,
               name: "11-3",
-              children: []
-            }
+              children: [],
+            },
             /*    {
               id: 4,
               pid: 1,
@@ -90,7 +101,7 @@ export default {
                 }
               ]
             } */
-          ]
+          ],
         },
         {
           id: 7127,
@@ -102,16 +113,16 @@ export default {
               pid: 7127,
               name: "debug22",
               // disabled: true,
-              children: []
+              children: [],
             },
             {
               id: 71273,
               pid: 7127,
               name: "debug11",
-              children: []
-            }
-          ]
-        }
+              children: [],
+            },
+          ],
+        },
       ], // 穿梭框 - 源数据 - 树形
       toData: [
         /*  {
@@ -138,46 +149,46 @@ export default {
         {
           id: "1",
           name: "1",
-          pid: "0"
+          pid: "0",
         },
         {
           id: "2",
           name: "2",
-          pid: "0"
+          pid: "0",
         },
         {
           id: "1-1",
           name: "1-1",
-          pid: "1"
+          pid: "1",
         },
         {
           id: "1-2",
           name: "1-2",
-          pid: "1"
+          pid: "1",
         },
         {
           id: "1-1-1",
           name: "1-1-1",
-          pid: "1-1"
+          pid: "1-1",
         },
         {
           id: "1-1-1-1",
           name: "1-1-1-1",
-          pid: "1-1-1"
+          pid: "1-1-1",
         },
         {
           id: "2-1",
           name: "2-1",
-          pid: "2"
+          pid: "2",
         },
         {
           id: "2-2",
           name: "2-2",
-          pid: "2"
-        }
+          pid: "2",
+        },
       ],
       toArray: [],
-      defaultCheckedKeys: [] // 左侧默认选中数据
+      defaultCheckedKeys: [], // 左侧默认选中数据
     };
   },
   created() {
@@ -813,14 +824,14 @@ export default {
             pid: 1,
             name: "debug22",
             // disabled: true,
-            children: []
+            children: [],
           },
           {
             id: 71273,
             pid: 1,
             name: "debug11",
-            children: []
-          }
+            children: [],
+          },
         ]);
       }, 500);
     },
@@ -866,18 +877,10 @@ export default {
         <span class="custom-tree-node">
           <span>{node.label}</span>
           <span>
-            <el-button
-              size="mini"
-              type="text"
-              on-click={() => this.append(data)}
-            >
+            <el-button size="mini" type="text" on-click={() => this.append(data)}>
               Append
             </el-button>
-            <el-button
-              size="mini"
-              type="text"
-              on-click={() => this.remove(node, data)}
-            >
+            <el-button size="mini" type="text" on-click={() => this.remove(node, data)}>
               Delete
             </el-button>
           </span>
@@ -887,7 +890,7 @@ export default {
     // 标题自定义区点击事件
     handleTitleRight() {
       alert("标题自定义区点击事件");
-    }
+    },
   },
   computed: {
     title() {
@@ -896,8 +899,8 @@ export default {
       } else {
         return ["通讯录", "收件人", "抄送人", "密送人"];
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
