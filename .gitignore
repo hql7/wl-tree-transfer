@@ -2,7 +2,7 @@
 node_modules
 dist
 public
-
+lib
 # src
 babel.config.js
 yarn.lock

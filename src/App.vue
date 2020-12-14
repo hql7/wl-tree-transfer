@@ -33,8 +33,8 @@
         :to_data="toData"
         :title="title"
         :mode="mode"
-        @addBtn="add"
-        @removeBtn="remove"
+        @add-btn="add"
+        @remove-btn="remove"
         @left-check-change="leftCheckChange"
         @right-check-change="rightCheckChange"
       >

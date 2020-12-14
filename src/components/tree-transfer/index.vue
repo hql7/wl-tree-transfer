@@ -17,6 +17,7 @@
           <slot name="from"></slot>
           <el-input
             v-if="filter"
+            clearable
             :placeholder="placeholder"
             v-model="filterFrom"
             size="small"
@@ -26,6 +27,11 @@
             ref="from-tree"
             show-checkbox
             :lazy="lazy"
+            :indent="indent"
+            :draggable="draggable"
+            :allow-drag="allowDrag"
+            :allow-drop="allowDrop"
+            :icon-class="iconClass"
             :node-key="node_key"
             :load="leftloadNode"
             :props="defaultProps"
@@ -39,7 +45,19 @@
             :default-checked-keys="defaultCheckedKeys"
             :default-expanded-keys="from_expanded_keys"
             @check="fromTreeChecked"
-          ></el-tree>
+            @node-drag-start="nodeDragStartLeft"
+            @node-drag-enter="nodeDragEnterLeft"
+            @node-drag-leave="nodeDragLeaveLeft"
+            @node-drag-over="nodeDragOverLeft"
+            @node-drag-end="nodeDragEndLeft"
+            @node-drop="nodeDropLeft"
+          >
+            <span class="custom-tree-node" slot-scope="{ node, data }">
+              <slot name="content-left" :node="node" :data="data">
+                <span>{{ node.label }}</span>
+              </slot>
+            </span>
+          </el-tree>
           <slot name="left-footer"></slot>
         </div>
       </div>
@@ -47,11 +65,7 @@
       <div class="transfer-center">
         <template v-if="button_text">
           <p class="transfer-center-item">
-            <el-button
-              type="primary"
-              @click="addToAims(true)"
-              :disabled="from_disabled"
-            >
+            <el-button type="primary" @click="addToAims(true)" :disabled="from_disabled">
               {{ fromButton || "添加" }}
               <i class="el-icon-arrow-right"></i>
             </el-button>
@@ -103,6 +117,7 @@
           <slot name="to"></slot>
           <el-input
             v-if="filter"
+            clearable
             :placeholder="placeholder"
             v-model="filterTo"
             size="small"
@@ -117,6 +132,11 @@
             :node-key="node_key"
             :props="defaultProps"
             :load="rightloadNode"
+            :indent="indent"
+            :draggable="draggable"
+            :allow-drag="allowDrag"
+            :allow-drop="allowDrop"
+            :icon-class="iconClass"
             :default-expand-all="openAll"
             :highlight-current="highLight"
             :check-strictly="checkStrictly"
@@ -124,7 +144,19 @@
             :filter-node-method="filterNodeTo"
             :default-expanded-keys="to_expanded_keys"
             @check="toTreeChecked"
-          ></el-tree>
+            @node-drag-start="nodeDragStartRight"
+            @node-drag-enter="nodeDragEnterRight"
+            @node-drag-leave="nodeDragLeaveRight"
+            @node-drag-over="nodeDragOverRight"
+            @node-drag-end="nodeDragEndRight"
+            @node-drop="nodeDropRight"
+          >
+            <span class="custom-tree-node" slot-scope="{ node, data }">
+              <slot name="content-left" :node="node" :data="data">
+                <span>{{ node.label }}</span>
+              </slot>
+            </span>
+          </el-tree>
           <slot name="right-footer"></slot>
         </div>
       </div>
@@ -145,6 +177,7 @@
           <slot name="from"></slot>
           <el-input
             v-if="filter"
+            clearable
             :placeholder="placeholder"
             v-model="filterFrom"
             size="small"
@@ -153,6 +186,11 @@
           <el-tree
             ref="from-tree"
             show-checkbox
+            :indent="indent"
+            :draggable="draggable"
+            :allow-drag="allowDrag"
+            :allow-drop="allowDrop"
+            :icon-class="iconClass"
             :node-key="node_key"
             :props="defaultProps"
             :data="self_from_data"
@@ -162,6 +200,12 @@
             :filter-node-method="filterNodeFrom"
             :default-expanded-keys="from_expanded_keys"
             @check="fromTreeChecked"
+            @node-drag-start="nodeDragStartLeft"
+            @node-drag-enter="nodeDragEnterLeft"
+            @node-drag-leave="nodeDragLeaveLeft"
+            @node-drag-over="nodeDragOverLeft"
+            @node-drag-end="nodeDragEndLeft"
+            @node-drop="nodeDropLeft"
           ></el-tree>
         </div>
       </div>
@@ -210,9 +254,7 @@
         >
           <h3 class="transfer-title">
             <span>{{ toTitle }}</span>
-            <span class="u-clear" @click="clearList(0, 'all')" v-if="!move_up"
-              >清空</span
-            >
+            <span class="u-clear" @click="clearList(0, 'all')" v-if="!move_up">清空</span>
             <img
               class="move_up_img move_down_img"
               v-else
@@ -232,11 +274,7 @@
               class="filter-tree"
             ></el-input>
             <ul class="address-list-ul">
-              <li
-                class="address-list-li"
-                v-for="item of addressee"
-                :key="item[node_key]"
-              >
+              <li class="address-list-li" v-for="item of addressee" :key="item[node_key]">
                 <label>
                   {{ item[defaultProps.label] }}
                   {{ addressOptions.connector }}
@@ -266,11 +304,7 @@
               class="filter-tree"
             ></el-input>
             <ul class="address-list-ul">
-              <li
-                class="address-list-li"
-                v-for="item of Cc"
-                :key="item[node_key]"
-              >
+              <li class="address-list-li" v-for="item of Cc" :key="item[node_key]">
                 <label>
                   {{ item[defaultProps.label] }}
                   {{ addressOptions.connector }}
@@ -291,16 +325,8 @@
         >
           <h3 class="transfer-title">
             <span>{{ toTitleThird || "密送人" }}</span>
-            <span class="u-clear" @click="clearList(2, 'all')" v-if="move_up"
-              >清空</span
-            >
-            <img
-              class="move_up_img"
-              v-else
-              src="./shang.png"
-              alt
-              @click="moveUp('up')"
-            />
+            <span class="u-clear" @click="clearList(2, 'all')" v-if="move_up">清空</span>
+            <img class="move_up_img" v-else src="./shang.png" alt @click="moveUp('up')" />
           </h3>
           <!-- 内容区 -->
           <div class="transfer-main" v-if="move_up">
@@ -367,7 +393,7 @@ export default {
       move_up: false, // 通讯录模式 切换右侧
     };
   },
-   props: {
+  props: {
     sjr: {
       type: Array,
       default: () => {
@@ -524,6 +550,34 @@ export default {
       type: Boolean,
       default: false,
     },
+    // 是否在第一次展开某个树节点后才渲染其子节点
+    renderAfterExpand: {
+      type: Boolean,
+      default: true,
+    },
+    // 是否在点击节点的时候展开或者收缩节点
+    expandOnClickNode: {
+      type: Boolean,
+      default: true,
+    },
+    // 是否在点击节点的时候选中节点
+    checkOnClickNode: {
+      type: Boolean,
+      default: false,
+    },
+    // 相邻级节点间的水平缩进，单位为像素
+    indent: {
+      type: Number,
+      default: 16,
+    },
+    // 	自定义树节点的图标
+    iconClass: String,
+    // 是否开启拖拽节点功能
+    draggable: Boolean,
+    // 判断节点能否被拖拽
+    allowDrag: Function,
+    // 拖拽时判定目标节点能否被放置
+    allowDrop: Function,
   },
   methods: {
     // -------------------------------提供输出函数---------------------
@@ -623,7 +677,10 @@ export default {
 
       // 处理完毕按钮恢复禁用状态
       this.from_check_keys = [];
-
+      // 清空对面选中
+      this.$refs["to-tree"].setCheckedKeys([]);
+      this.to_check_all = false;
+      this.to_is_indeterminate = false;
       // 目标数据节点展开
       if (this.transferOpenNode && !this.lazy) {
         this.to_expanded_keys = keys;
@@ -631,7 +688,7 @@ export default {
 
       // 传递信息给父组件
       emit &&
-        this.$emit("addBtn", this.self_from_data, this.self_to_data, {
+        this.$emit("add-btn", this.self_from_data, this.self_to_data, {
           keys,
           nodes,
           harfKeys,
@@ -735,14 +792,17 @@ export default {
 
       // 处理完毕按钮恢复禁用状态
       this.to_check_keys = [];
-
+      // 清空对面选中
+      this.$refs["from-tree"].setCheckedKeys([]);
+      this.from_check_all = false;
+      this.from_is_indeterminate = false;
       // 目标数据节点展开
       if (this.transferOpenNode && !this.lazy) {
         this.from_expanded_keys = keys;
       }
 
       // 传递信息给父组件
-      this.$emit("removeBtn", this.self_from_data, this.self_to_data, {
+      this.$emit("remove-btn", this.self_from_data, this.self_to_data, {
         keys,
         nodes,
         harfKeys,
@@ -963,9 +1023,7 @@ export default {
         case 0:
           arrayDeWeighting = arrayCheckedNodes.filter((item) => {
             if (
-              !this.addressee.some(
-                (ite) => ite[this.node_key] == item[this.node_key]
-              )
+              !this.addressee.some((ite) => ite[this.node_key] == item[this.node_key])
             ) {
               return item;
             }
@@ -974,9 +1032,7 @@ export default {
           break;
         case 1:
           arrayDeWeighting = arrayCheckedNodes.filter((item) => {
-            if (
-              !this.Cc.some((ite) => ite[this.node_key] == item[this.node_key])
-            ) {
+            if (!this.Cc.some((ite) => ite[this.node_key] == item[this.node_key])) {
               return item;
             }
           });
@@ -1003,34 +1059,28 @@ export default {
       this.from_check_keys = [];
 
       // 传递信息给父组件
-      this.$emit("addBtn", this.addressee, this.Cc, this.secret_receiver);
+      this.$emit("add-btn", this.addressee, this.Cc, this.secret_receiver);
     },
     // 清理 通讯录选中 数据
     clearList(type, id) {
       switch (type) {
         case 0:
           this.addressee =
-            id == "all"
-              ? []
-              : this.addressee.filter((item) => item[this.node_key] != id);
+            id == "all" ? [] : this.addressee.filter((item) => item[this.node_key] != id);
           break;
         case 1:
           this.Cc =
-            id == "all"
-              ? []
-              : this.Cc.filter((item) => item[this.node_key] != id);
+            id == "all" ? [] : this.Cc.filter((item) => item[this.node_key] != id);
           break;
         case 2:
           this.secret_receiver =
             id == "all"
               ? []
-              : this.secret_receiver.filter(
-                  (item) => item[this.node_key] != id
-                );
+              : this.secret_receiver.filter((item) => item[this.node_key] != id);
           break;
       }
       // 传递信息给父组件
-      this.$emit("removeBtn", this.addressee, this.Cc, this.secret_receiver);
+      this.$emit("remove-btn", this.addressee, this.Cc, this.secret_receiver);
     },
     // 右侧 通讯录 上下自动
     moveUp(type) {
@@ -1039,6 +1089,54 @@ export default {
       } else {
         this.move_up = false;
       }
+    },
+    // 节点开始拖拽时触发的事件
+    nodeDragStartLeft(node, dragEvent) {
+      this.$emit("node-drag-start", "left", node, dragEvent);
+    },
+    // 拖拽进入其他节点时触发的事件
+    nodeDragEnterLeft(node, target, dragEvent) {
+      this.$emit("node-drag-enter", "left", node, target, dragEvent);
+    },
+    // 拖拽离开某个节点时触发的事件
+    nodeDragLeaveLeft(node, leaved, dragEvent) {
+      this.$emit("node-drag-leave", "left", node, leaved, dragEvent);
+    },
+    // 在拖拽节点时触发的事件
+    nodeDragOverLeft(node, target, dragEvent) {
+      this.$emit("node-drag-over", "left", node, target, dragEvent);
+    },
+    // 	拖拽结束时（可能未成功）触发的事件
+    nodeDragEndLeft(node, target, location, dragEvent) {
+      this.$emit("node-drag-end", "left", node, target, location, dragEvent);
+    },
+    // 拖拽成功完成时触发的事件
+    nodeDropLeft(node, target, location, dragEvent) {
+      this.$emit("node-drop", "left", node, target, location, dragEvent);
+    },
+    // 节点开始拖拽时触发的事件
+    nodeDragStartRight(node, dragEvent) {
+      this.$emit("node-drag-start", "right", node, dragEvent);
+    },
+    // 拖拽进入其他节点时触发的事件
+    nodeDragEnterRight(node, target, dragEvent) {
+      this.$emit("node-drag-enter", "right", node, target, dragEvent);
+    },
+    // 拖拽离开某个节点时触发的事件
+    nodeDragLeaveRight(node, leaved, dragEvent) {
+      this.$emit("node-drag-leave", "right", node, leaved, dragEvent);
+    },
+    // 在拖拽节点时触发的事件
+    nodeDragOverRight(node, target, dragEvent) {
+      this.$emit("node-drag-over", "right", node, target, dragEvent);
+    },
+    // 	拖拽结束时（可能未成功）触发的事件
+    nodeDragEndRight(node, target, location, dragEvent) {
+      this.$emit("node-drag-end", "right", node, target, location, dragEvent);
+    },
+    // 拖拽成功完成时触发的事件
+    nodeDropRight(node, target, location, dragEvent) {
+      this.$emit("node-drop", "right", node, target, location, dragEvent);
     },
     // 以下为提供方法 ----------------------------------------------------------------方法--------------------------------------
     /**
@@ -1247,9 +1345,7 @@ export default {
         this.secret_receiver = this.archiveThird;
       }
       let reg = RegExp(newval);
-      this.secret_receiver = this.secret_receiver.filter((item) =>
-        reg.test(item.label)
-      );
+      this.secret_receiver = this.secret_receiver.filter((item) => reg.test(item.label));
     },
     // 监视默认选中
     defaultCheckedKeys: {
