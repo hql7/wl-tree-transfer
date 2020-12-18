@@ -1,5 +1,7 @@
 # wl-tree-transfer
 
+#### wl-tree-transfer不再更新，它本身和el-tree-transfer功能一样，或者在[weilan-ui](https://www.npmjs.com/package/weilan-ui)中可以找到它
+
 ## 简介
 
 wl-tree-fransfer 是一个基于 VUE 和 element-ui 的树形穿梭框组件，使用前请确认已经引入[element-ui](http://element.eleme.io/#/zh-CN/component/quickstart)！
